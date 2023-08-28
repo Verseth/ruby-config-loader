@@ -1,0 +1,4 @@
+This text file doesn't have an env prefix!
+
+But it has ERB: <%= 1 + 5 %>
+Example

@@ -1,0 +1,8 @@
+development:
+  venus: development
+
+test:
+  venus: test
+
+production:
+  venus: production

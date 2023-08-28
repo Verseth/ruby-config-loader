@@ -1,0 +1,8 @@
+development:
+  mars: dev
+
+test:
+  mars: test
+
+production:
+  mars: prod

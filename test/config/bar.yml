@@ -1,0 +1,8 @@
+development:
+  bar: development
+
+test:
+  bar: test
+
+production:
+  bar: production

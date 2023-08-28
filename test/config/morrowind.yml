@@ -1,0 +1,8 @@
+development:
+  morrowind: development
+
+test:
+  morrowind: test
+
+production:
+  morrowind: production

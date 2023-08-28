@@ -1,0 +1,9 @@
+development:
+  foo: development
+  erb: <%= 2 + 5 %>
+
+test:
+  foo: test
+
+production:
+  foo: production

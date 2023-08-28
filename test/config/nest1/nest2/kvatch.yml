@@ -1,0 +1,8 @@
+development:
+  kvatch: dev
+
+test:
+  kvatch: test
+
+production:
+  kvatch: prod
