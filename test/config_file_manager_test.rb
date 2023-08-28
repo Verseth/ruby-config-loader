@@ -18,7 +18,7 @@ class ConfigFileManagerTest < ::Minitest::Test
           'config/foo.yml',
           'config/text_with_erb.txt'
         )
-        got = loader.files
+        got = loader.files.sort
         assert_equal want, got
       end
 
@@ -32,7 +32,7 @@ class ConfigFileManagerTest < ::Minitest::Test
           'config/foo.yml',
           'config/text_with_erb.txt'
         )
-        got = loader.files
+        got = loader.files.sort
         assert_equal want, got
       end
 
@@ -44,7 +44,7 @@ class ConfigFileManagerTest < ::Minitest::Test
           'config/foo.yml',
           'config/text_with_erb.txt'
         )
-        got = loader.files
+        got = loader.files.sort
         assert_equal want, got
       end
     end
@@ -59,7 +59,7 @@ class ConfigFileManagerTest < ::Minitest::Test
           'config/morrowind.yml',
           'config/dummy1-alt.yml'
         )
-        got = loader.files
+        got = loader.files.sort
         assert_equal want, got
       end
 
@@ -72,7 +72,7 @@ class ConfigFileManagerTest < ::Minitest::Test
           'config/morrowind.yml',
           'config/dummy1-alt.yml'
         )
-        got = loader.files(example_extension: '.alt')
+        got = loader.files(example_extension: '.alt').sort
         assert_equal want, got
       end
 
@@ -84,7 +84,7 @@ class ConfigFileManagerTest < ::Minitest::Test
           'config/morrowind.yml',
           'config/dummy1-alt.yml'
         )
-        got = loader.files
+        got = loader.files.sort
         assert_equal want, got
       end
 
@@ -94,7 +94,7 @@ class ConfigFileManagerTest < ::Minitest::Test
           'config/morrowind.yml',
           'config/dummy1-alt.yml'
         )
-        got = loader.files
+        got = loader.files.sort
         assert_equal want, got
       end
     end
@@ -107,7 +107,7 @@ class ConfigFileManagerTest < ::Minitest::Test
       want = to_absolute_paths(
         'config/test_folder'
       )
-      got = loader.dirs
+      got = loader.dirs.sort
       assert_equal want, got
     end
 
@@ -116,7 +116,7 @@ class ConfigFileManagerTest < ::Minitest::Test
       want = to_absolute_paths(
         'config/alt_folder'
       )
-      got = loader.dirs
+      got = loader.dirs.sort
       assert_equal want, got
     end
 
@@ -125,7 +125,7 @@ class ConfigFileManagerTest < ::Minitest::Test
       want = to_absolute_paths(
         'config/alt_folder'
       )
-      got = loader.dirs(example_extension: '.alt')
+      got = loader.dirs(example_extension: '.alt').sort
       assert_equal want, got
     end
   end
@@ -350,9 +350,8 @@ class ConfigFileManagerTest < ::Minitest::Test
   # @param paths [Array<String>]
   # @return [Array<String>]
   def to_absolute_paths(*paths)
-    paths.map do |p|
-      ::File.expand_path(p, __dir__)
-    end
+    paths.map { |p| ::File.expand_path(p, __dir__) }
+         .sort
   end
 
 end
