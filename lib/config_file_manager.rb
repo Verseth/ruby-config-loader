@@ -173,7 +173,7 @@ class ConfigFileManager
   # @return [Hash, Array]
   def load_yaml(*file_name, env: @env, symbolize: true)
     env = env.to_sym if env && symbolize
-    parsed = ::YAML.load(load_erb(*file_name), symbolize_names: symbolize) # rubocop:disable Security/YAMLLoad
+    parsed = ruby_load_yaml(load_erb(*file_name), symbolize_names: symbolize)
     return parsed unless env
 
     parsed[env]
@@ -217,6 +217,16 @@ class ConfigFileManager
   end
 
   private
+
+  if ::Psych::VERSION >= '4'
+    def ruby_load_yaml(content, **options) # rubocop:disable Style/DocumentationMethod
+      ::YAML.load(content, aliases: true, **options) # rubocop:disable Security/YAMLLoad
+    end
+  else
+    def ruby_load_yaml(content, **options) # rubocop:disable Style/DocumentationMethod
+      ::YAML.load(content, **options) # rubocop:disable Security/YAMLLoad
+    end
+  end
 
   # @param original_name [String]
   # @param new_name [String]
