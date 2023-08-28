@@ -5,10 +5,10 @@ require 'yaml'
 require 'erb'
 require 'pastel'
 
-require_relative 'config_loader/version'
+require_relative 'config_file_manager/version'
 
 # Class that let's you manage your configuration files.
-class ConfigLoader
+class ConfigFileManager
   COLORS = ::Pastel.new
 
   # Absolute path to the main directory that contains all config files (and subdirectories).

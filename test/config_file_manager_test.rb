@@ -2,13 +2,13 @@
 
 require 'test_helper'
 
-class ConfigLoaderTest < ::Minitest::Test
+class ConfigFileManagerTest < ::Minitest::Test
   CONFIG_DIR_PATH = ::File.expand_path('config', __dir__)
 
   context 'files' do
     context '.example' do
       should 'list all files' do
-        loader = ConfigLoader.new(CONFIG_DIR_PATH)
+        loader = ConfigFileManager.new(CONFIG_DIR_PATH)
         want = to_absolute_paths(
           'config/dummy1.yml',
           'config/nest1/nest2/harambe.yml',
@@ -23,7 +23,7 @@ class ConfigLoaderTest < ::Minitest::Test
       end
 
       should 'list all files up to depth 1' do
-        loader = ConfigLoader.new(CONFIG_DIR_PATH, max_dir_depth: 1)
+        loader = ConfigFileManager.new(CONFIG_DIR_PATH, max_dir_depth: 1)
         want = to_absolute_paths(
           'config/dummy1.yml',
           'config/nest1/mars.yml',
@@ -37,7 +37,7 @@ class ConfigLoaderTest < ::Minitest::Test
       end
 
       should 'list all files up to depth 0' do
-        loader = ConfigLoader.new(CONFIG_DIR_PATH, max_dir_depth: 0)
+        loader = ConfigFileManager.new(CONFIG_DIR_PATH, max_dir_depth: 0)
         want = to_absolute_paths(
           'config/dummy1.yml',
           'config/bar.yml',
@@ -51,7 +51,7 @@ class ConfigLoaderTest < ::Minitest::Test
 
     context '.alt' do
       should 'list all files' do
-        loader = ConfigLoader.new(CONFIG_DIR_PATH, example_extension: '.alt')
+        loader = ConfigFileManager.new(CONFIG_DIR_PATH, example_extension: '.alt')
         want = to_absolute_paths(
           'config/nest1/venus.yml',
           'config/nest1/nest2/kvatch.yml',
@@ -64,7 +64,7 @@ class ConfigLoaderTest < ::Minitest::Test
       end
 
       should 'list all files by overriding the default' do
-        loader = ConfigLoader.new(CONFIG_DIR_PATH, example_extension: '.example')
+        loader = ConfigFileManager.new(CONFIG_DIR_PATH, example_extension: '.example')
         want = to_absolute_paths(
           'config/nest1/venus.yml',
           'config/nest1/nest2/kvatch.yml',
@@ -77,7 +77,7 @@ class ConfigLoaderTest < ::Minitest::Test
       end
 
       should 'list all files up to depth 1' do
-        loader = ConfigLoader.new(CONFIG_DIR_PATH, max_dir_depth: 1, example_extension: '.alt')
+        loader = ConfigFileManager.new(CONFIG_DIR_PATH, max_dir_depth: 1, example_extension: '.alt')
         want = to_absolute_paths(
           'config/nest1/venus.yml',
           'config/nest1/dummy2-alt.yml',
@@ -89,7 +89,7 @@ class ConfigLoaderTest < ::Minitest::Test
       end
 
       should 'list all files up to depth 0' do
-        loader = ConfigLoader.new(CONFIG_DIR_PATH, max_dir_depth: 0, example_extension: '.alt')
+        loader = ConfigFileManager.new(CONFIG_DIR_PATH, max_dir_depth: 0, example_extension: '.alt')
         want = to_absolute_paths(
           'config/morrowind.yml',
           'config/dummy1-alt.yml'
@@ -103,7 +103,7 @@ class ConfigLoaderTest < ::Minitest::Test
 
   context 'dirs' do
     should 'list all with .example' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       want = to_absolute_paths(
         'config/test_folder'
       )
@@ -112,7 +112,7 @@ class ConfigLoaderTest < ::Minitest::Test
     end
 
     should 'list all with .alt' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH, example_extension: '.alt')
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH, example_extension: '.alt')
       want = to_absolute_paths(
         'config/alt_folder'
       )
@@ -121,7 +121,7 @@ class ConfigLoaderTest < ::Minitest::Test
     end
 
     should 'list all with .alt by overriding the default' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH, example_extension: '.example')
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH, example_extension: '.example')
       want = to_absolute_paths(
         'config/alt_folder'
       )
@@ -132,26 +132,26 @@ class ConfigLoaderTest < ::Minitest::Test
 
   context 'load_yaml' do
     should 'load development and process ERB' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       value = loader.load_yaml('foo.yml', env: 'development')
       assert_equal 'development', value[:foo]
       assert_equal 7, value[:erb]
     end
 
     should 'load production' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       value = loader.load_yaml('bar.yml', env: 'production')
       assert_equal 'production', value[:bar]
     end
 
     should 'load and not symbolize' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       value = loader.load_yaml('bar.yml', env: 'production', symbolize: false)
       assert_equal 'production', value['bar']
     end
 
     should 'load from a nested directory' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       value = loader.load_yaml('nest1/nest2/harambe.yml', env: 'test')
       assert_equal 'RIP (test)', value[:harambe]
     end
@@ -160,7 +160,7 @@ class ConfigLoaderTest < ::Minitest::Test
 
   context 'load_erb' do
     should 'load and process ERB' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       value = loader.load_erb('text_with_erb.txt')
       assert_equal <<~ERB, value
         ERB: 6
@@ -168,7 +168,7 @@ class ConfigLoaderTest < ::Minitest::Test
     end
 
     should 'load YAML and process ERB' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       value = loader.load_erb('foo.yml')
       assert_equal <<~ERB, value
         development:
@@ -187,7 +187,7 @@ class ConfigLoaderTest < ::Minitest::Test
 
   context 'load_file' do
     should 'load and not process ERB' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       value = loader.load_file('text_with_erb.txt')
       assert_equal <<~ERB, value
         ERB: <%= 1 + 5 %>
@@ -195,7 +195,7 @@ class ConfigLoaderTest < ::Minitest::Test
     end
 
     should 'load YAML and not process ERB' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       value = loader.load_file('foo.yml')
       assert_equal <<~ERB, value
         development:
@@ -213,60 +213,60 @@ class ConfigLoaderTest < ::Minitest::Test
 
   context 'file_exist?' do
     should 'return true for an existing file' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert loader.file_exist?('foo.yml')
     end
 
     should 'return true for an existing nested file' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert loader.file_exist?('nest1/nest2/harambe.yml')
     end
 
     should 'return false for nonexistent file' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert !loader.file_exist?('pupa.yml')
     end
   end
 
   context 'dir_exist?' do
     should 'return true for an existing dir' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert loader.dir_exist?('nest1')
     end
 
     should 'return true for an existing nested dir' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert loader.dir_exist?('nest1/nest2')
     end
 
     should 'return false for nonexistent dir' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert !loader.dir_exist?('siemano')
     end
 
     should 'return false for an existing file' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert !loader.dir_exist?('foo.yml')
     end
   end
 
   context 'to_relative_path' do
     should 'convert' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert_equal 'foo/bar.yml', loader.to_relative_path("#{CONFIG_DIR_PATH}/foo/bar.yml")
     end
   end
 
   context 'absolute_path' do
     should 'convert' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert_equal "#{CONFIG_DIR_PATH}/foo/bar.yml", loader.to_absolute_path('foo/bar.yml')
     end
   end
 
   context 'create_missing_files' do
     should 'create all missing files for .example' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH)
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
       assert !loader.file_exist?('dummy1.yml')
       assert !loader.file_exist?('dummy1-alt.yml')
       assert !loader.file_exist?('nest1/dummy2.yml')
@@ -294,7 +294,7 @@ class ConfigLoaderTest < ::Minitest::Test
     end
 
     should 'create all missing files for .alt' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH, example_extension: '.alt')
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH, example_extension: '.alt')
       assert !loader.file_exist?('dummy1.yml')
       assert !loader.file_exist?('dummy1-alt.yml')
       assert !loader.file_exist?('nest1/dummy2.yml')
@@ -322,7 +322,7 @@ class ConfigLoaderTest < ::Minitest::Test
     end
 
     should 'create all missing files for .alt by overriding the default' do
-      loader = ConfigLoader.new(CONFIG_DIR_PATH, example_extension: '.example')
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH, example_extension: '.example')
       assert !loader.file_exist?('dummy1.yml')
       assert !loader.file_exist?('dummy1-alt.yml')
       assert !loader.file_exist?('nest1/dummy2.yml')

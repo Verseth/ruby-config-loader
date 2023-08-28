@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'lib/config_loader/version'
+require_relative 'lib/config_file_manager/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'config_loader'
-  spec.version = ConfigLoader::VERSION
+  spec.name = 'config_file_manager'
+  spec.version = ConfigFileManager::VERSION
   spec.authors = ['Mateusz Drewniak']
   spec.email = ['matmg24@gmail.com']
 

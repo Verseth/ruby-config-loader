@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    config_loader (0.1.0)
+    config_file_manager (0.1.0)
       pastel (~> 0.8)
 
 GEM
@@ -87,7 +87,7 @@ PLATFORMS
   arm64-darwin-22
 
 DEPENDENCIES
-  config_loader!
+  config_file_manager!
   debug (~> 1.8.0)
   minitest (~> 5.0)
   rake (~> 13.0)

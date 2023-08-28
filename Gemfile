@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in config_loader.gemspec
+# Specify your gem's dependencies in config_file_manager.gemspec
 gemspec
 
 gem 'debug', '~> 1.8.0' # debugger

@@ -1,4 +1,4 @@
-# ConfigLoader
+# ConfigFileManager
 
 This gem makes it easier to manage your configuration files in Ruby apps.
 
@@ -6,15 +6,15 @@ This gem makes it easier to manage your configuration files in Ruby apps.
 
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add config_loader
+    $ bundle add config_file_manager
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install config_loader
+    $ gem install config_file_manager
 
 ## Usage
 
-This gem adds a new class `ConfigLoader`, which helps you load and list config files and config directories.
+This gem adds a new class `ConfigFileManager`, which helps you load and list config files and config directories.
 
 The basic idea is that config files with sensitive information should
 not be stored in git (they are often added to `.gitignore`).
@@ -38,8 +38,8 @@ You can use this gem to easily configure automatic symlinking of config files in
 ```rb
 # config/deploy.rb
 
-config_loader = ConfigLoader.new(File.expand_path(__dir__))
-set :linked_files, config_loader.to_relative_paths(config_loader.files)
+config_file_manager = ConfigFileManager.new(File.expand_path(__dir__))
+set :linked_files, config_file_manager.to_relative_paths(config_file_manager.files)
 ```
 
 That way you don't have to specify the config files by hand.
@@ -48,12 +48,12 @@ That way you don't have to specify the config files by hand.
 
 This gem can greatly reduce boilerplate in Rails initializers that load config files.
 
-Create an initializer that will be executed first and creates a configured instance of `ConfigLoader` and saves it to a constant so it can be accessed in other initializers.
+Create an initializer that will be executed first and creates a configured instance of `ConfigFileManager` and saves it to a constant so it can be accessed in other initializers.
 
 ```rb
-# config/initializers/0_config_loader.rb
+# config/initializers/0_config_file_manager.rb
 
-CONFIG_LOADER = ConfigLoader.new(File.expand_path('..', __dir__), env: Rails.env)
+CONFIG_MANAGER = ConfigFileManager.new(File.expand_path('..', __dir__), env: Rails.env)
 ```
 
 And then you can you it to conveniently load config files.
@@ -61,17 +61,17 @@ And then you can you it to conveniently load config files.
 ```rb
 # config/initializers/foo.rb
 
-FOO = CONFIG_LOADER.load_yaml('foo.yml')
+FOO = CONFIG_MANAGER.load_yaml('foo.yml')
 ```
 
-### ConfigLoader initializer
+### ConfigFileManager initializer
 
-To start managing your config file you should create a new `ConfigLoader`.
+To start managing your config file you should create a new `ConfigFileManager`.
 
 ```rb
-require 'config_loader'
+require 'config_file_manager'
 
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 ```
 
 The loader has one required argument `config_dir`, an absolute path
@@ -80,7 +80,7 @@ to the directory that contains your config files.
 You can also specify a custom dummy file extension (by default it is `.example`).
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__), example_extension: '.dummy')
+loader = ConfigFileManager.new(File.expand_path('config', __dir__), example_extension: '.dummy')
 ```
 
 In this case the gem would expect something like this:
@@ -94,7 +94,7 @@ config/
 You can also specify the current environment.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__), env: 'production')
+loader = ConfigFileManager.new(File.expand_path('config', __dir__), env: 'production')
 ```
 
 ### files
@@ -114,7 +114,7 @@ config/
 Then you could retrieve the absolute paths to all required config files (no matter if they exist or not).
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.files
 # => ["/Users/Verseth/my_app/config/foo.yml", "/Users/Verseth/my_app/config/bar.txt", "/Users/Verseth/my_app/config/subdir/baz.yml"]
 ```
@@ -136,7 +136,7 @@ config/
 Then you could retrieve the absolute paths to all missing config files (dummy files with no real versions).
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.missing_files
 # => ["/Users/Verseth/my_app/config/foo.yml", "/Users/Verseth/my_app/config/subdir/baz.yml"]
 ```
@@ -159,7 +159,7 @@ config/
 Then you could create the missing files like so.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.create_missing_files(print: true)
 # == Copying missing config files ==
 #        copy  /Users/Verseth/my_app/config/foo.yml.example
@@ -176,7 +176,7 @@ Converts an absolute path within the config directory to a relative path.
 You can use it like so.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.to_relative_path("/Users/Verseth/my_app/config/foo.yml")
 #=> "foo.yml"
 ```
@@ -188,7 +188,7 @@ Converts an absolute path within the config directory to a relative path.
 You can use it like so.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.to_absolute_path("foo.yml")
 #=> "/Users/Verseth/my_app/config/foo.yml"
 ```
@@ -211,7 +211,7 @@ production:
 You cna load it like so.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.load_yaml('foo.yml')
 #=> { foo: "dev value 7" }
 ```
@@ -219,7 +219,7 @@ loader.load_yaml('foo.yml')
 You can also load a section for another environment by altering the constructor.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__), env: 'production')
+loader = ConfigFileManager.new(File.expand_path('config', __dir__), env: 'production')
 loader.load_yaml('foo.yml')
 #=> { foo: "prod value 8" }
 ```
@@ -227,7 +227,7 @@ loader.load_yaml('foo.yml')
 Or by passing another argument to the method.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.load_yaml('foo.yml', env: 'production')
 #=> { foo: "prod value 8" }
 ```
@@ -235,7 +235,7 @@ loader.load_yaml('foo.yml', env: 'production')
 You can also disable key symbolization.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.load_yaml('foo.yml', symbolize: false)
 #=> { "foo" => "dev value 7" }
 ```
@@ -243,7 +243,7 @@ loader.load_yaml('foo.yml', symbolize: false)
 Or load the entire content of the file without looking at a specific environment.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.load_yaml('foo.yml', env: nil)
 #=> { development: { foo: "dev value 7" }, production: { foo: "prod value 8" } }
 ```
@@ -261,7 +261,7 @@ This is a file with ERB: <%= 2 - 3 %>
 You can load it like so.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.load_erb('foo.txt')
 # => "This is a file with ERB: -1"
 ```
@@ -279,7 +279,7 @@ This is a file!
 You can load it like so.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.load_file('foo.txt')
 # => "This is a file!"
 ```
@@ -302,7 +302,7 @@ config/
 You can perform the following checks.
 
 ```rb
-loader = ConfigLoader.new(File.expand_path('config', __dir__))
+loader = ConfigFileManager.new(File.expand_path('config', __dir__))
 loader.file_exist?('foo.yml.example') #=> true
 loader.file_exist?('bar.yml') #=> false
 loader.file_exist?('subdir/baz.yml.example') #=> true
