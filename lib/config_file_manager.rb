@@ -125,7 +125,7 @@ class ConfigFileManager
   def create_missing_dirs(example_extension: @example_extension, print: false)
     puts COLORS.blue('== Copying missing config directories ==') if print
     dirs(example_extension: example_extension).each do |dir|
-      create_missing_dir("#{dir}#{example_extension}", file, print: print)
+      create_missing_dir("#{dir}#{example_extension}", dir, print: print)
     end
   end
 
@@ -182,6 +182,11 @@ class ConfigFileManager
   # @param file_name [Array<String>]
   def delete_file(*file_name)
     ::File.delete(file_path(*file_name))
+  end
+
+  # @param dir_name [Array<String>]
+  def delete_dir(*dir_name)
+    ::FileUtils.rm_r(file_path(*dir_name))
   end
 
   # @param file_name [Array<String>]

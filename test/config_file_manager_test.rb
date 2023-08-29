@@ -345,6 +345,37 @@ class ConfigFileManagerTest < ::Minitest::Test
     end
   end
 
+  context 'create_missing_dirs' do
+    should 'create all missing dirs for .example' do
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
+      assert !loader.dir_exist?('test_folder')
+      assert !loader.file_exist?('test_folder/some_awesome_file')
+      assert !loader.dir_exist?('test_folder/test_subfolder')
+      assert !loader.file_exist?('test_folder/test_subfolder/another_file')
+
+      loader.create_missing_dirs
+
+      assert loader.dir_exist?('test_folder')
+
+      assert loader.file_exist?('test_folder/some_awesome_file')
+      assert_equal loader.load_file('test_folder/some_awesome_file'),
+                   loader.load_file('test_folder.example/some_awesome_file')
+
+      assert loader.dir_exist?('test_folder/test_subfolder')
+
+      assert loader.file_exist?('test_folder/test_subfolder/another_file')
+      assert_equal loader.load_file('test_folder/test_subfolder/another_file'),
+                   loader.load_file('test_folder.example/test_subfolder/another_file')
+
+      loader.delete_dir('test_folder')
+
+      assert !loader.dir_exist?('test_folder')
+      assert !loader.file_exist?('test_folder/some_awesome_file')
+      assert !loader.dir_exist?('test_folder/test_subfolder')
+      assert !loader.file_exist?('test_folder/test_subfolder/another_file')
+    end
+  end
+
   private
 
   # @param paths [Array<String>]
