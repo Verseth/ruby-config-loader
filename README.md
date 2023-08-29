@@ -38,10 +38,16 @@ You can use this gem to easily configure automatic symlinking of config files in
 ```rb
 # config/deploy.rb
 
-root_path = ::File.expand_path('..', __dir__)
+# path to the repo root
+root_path = File.expand_path('..', __dir__)
+# path to the `config/` directory
+config_dir_path = File.expand_path(__dir__)
 
-config_file_manager = ConfigFileManager.new(File.expand_path(__dir__))
-set :linked_files, config_file_manager.files.map { _1.delete_prefix("#{root_path}/") }
+config_file_manager = ConfigFileManager.new(config_dir_path)
+# get absolute paths to all config files and change them
+# to relative paths (relative to the repo root)
+linked_files = config_file_manager.files.map { _1.delete_prefix("#{root_path}/") }
+set :linked_files, linked_files
 ```
 
 That way you don't have to specify the config files by hand.
