@@ -38,8 +38,10 @@ You can use this gem to easily configure automatic symlinking of config files in
 ```rb
 # config/deploy.rb
 
+root_path = ::File.expand_path('..', __dir__)
+
 config_file_manager = ConfigFileManager.new(File.expand_path(__dir__))
-set :linked_files, config_file_manager.to_relative_paths(config_file_manager.files)
+set :linked_files, config_file_manager.files.map { _1.delete_prefix("#{root_path}/") }
 ```
 
 That way you don't have to specify the config files by hand.
@@ -181,7 +183,7 @@ loader.to_relative_path("/Users/Verseth/my_app/config/foo.yml")
 #=> "foo.yml"
 ```
 
-## to_absolute_path
+### to_absolute_path
 
 Converts an absolute path within the config directory to a relative path.
 
@@ -208,7 +210,7 @@ production:
     foo: prod value <%= 10 - 2 %>
 ```
 
-You cna load it like so.
+You can load it like so.
 
 ```rb
 loader = ConfigFileManager.new(File.expand_path('config', __dir__))
