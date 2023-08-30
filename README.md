@@ -61,7 +61,7 @@ Create an initializer that will be executed first and creates a configured insta
 ```rb
 # config/initializers/0_config_file_manager.rb
 
-CONFIG_MANAGER = ConfigFileManager.new(File.expand_path('..', __dir__), env: Rails.env)
+CONFIG_MANAGER = ConfigFileManager.new(Rails.root.join('config'), env: Rails.env)
 ```
 
 And then you can you it to conveniently load config files.
