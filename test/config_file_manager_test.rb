@@ -158,6 +158,29 @@ class ConfigFileManagerTest < ::Minitest::Test
 
   end
 
+  context 'load_json' do
+    should 'load and process ERB' do
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
+      value = loader.load_json('jaj_son.json')
+      assert_equal 'development', value[:foo]
+      assert_equal 7, value[:erb]
+    end
+
+    should 'load and not symbolize' do
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
+      value = loader.load_json('jaj_son.json', symbolize: false)
+      assert_equal 'development', value['foo']
+      assert_equal 7, value['erb']
+    end
+
+    should 'load from a nested directory' do
+      loader = ConfigFileManager.new(CONFIG_DIR_PATH)
+      value = loader.load_json('nest1/nest2/2pac.json')
+      assert_equal 'Changes', value[:'2pac'].first[:name]
+      assert_equal 'Juicy', value[:biggie].last[:name]
+    end
+  end
+
   context 'load_erb' do
     should 'load and process ERB' do
       loader = ConfigFileManager.new(CONFIG_DIR_PATH)

@@ -1,0 +1,4 @@
+{
+  "foo": "development",
+  "erb": <%= 2 + 5 %>
+}
