@@ -1,0 +1,11 @@
+{
+  "development":{
+     "type": "dev"
+    },
+    "test":{
+      "type": "test"
+    },
+     "production":{
+      "type": "production"
+    }
+}
