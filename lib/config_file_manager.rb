@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'fileutils'
+require 'json'
 require 'yaml'
 require 'erb'
 require 'pastel'
@@ -174,6 +175,18 @@ class ConfigFileManager
   def load_yaml(*file_name, env: @env, symbolize: true)
     env = env.to_sym if env && symbolize
     parsed = ruby_load_yaml(load_erb(*file_name), symbolize_names: symbolize)
+    return parsed unless env
+
+    parsed[env]
+  end
+
+  # @param file_name [Array<String>]
+  # @param env [String, nil]
+  # @param symbolize [Boolean] Whether the keys should be converted to Ruby symbols
+  # @return [Hash, Array]
+  def load_json(*file_name, env: @env, symbolize: true)
+    env = env.to_sym if env && symbolize
+    parsed = ::JSON.parse(load_erb(*file_name), symbolize_names: symbolize)
     return parsed unless env
 
     parsed[env]
